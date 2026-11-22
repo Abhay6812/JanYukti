@@ -1,6 +1,6 @@
 # JanYukti (Haq) – Farmer Benefits Finder
 
-**Live demo:** https://haq-farmer-benefits-finder-484951141846.asia-east1.run.app/
+**Live demo:**
 
 A voice-friendly web app built **only for small farmers of Maharashtra**. A farmer describes their land and crop by voice or tap, and the app shows which government schemes they are **likely** eligible for, why, which documents to gather, how to apply, and when deadlines fall.
 
