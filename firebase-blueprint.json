@@ -1,0 +1,160 @@
+{
+  "entities": {
+    "Scheme": {
+      "title": "Agricultural Welfare Scheme",
+      "description": "Verified Indian central or state agricultural welfare scheme containing Zero-PII eligibility parameters, official https:// portal URL, verification date, and trilingual (English, Hindi, Marathi) copy.",
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80,
+          "pattern": "^[a-z0-9-]+$",
+          "description": "URL-safe unique scheme identifier."
+        },
+        "officialUrl": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 300,
+          "pattern": "^https://[a-zA-Z0-9.-]+(/.*)?$",
+          "description": "Direct official https:// government portal URL."
+        },
+        "lastVerified": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "ISO calendar date (YYYY-MM-DD) when a KVK/B2G officer last verified scheme rules."
+        },
+        "verifiedBy": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100,
+          "description": "Department or Krishi Vigyan Kendra desk that verified the scheme."
+        },
+        "governmentLevel": {
+          "type": "string",
+          "enum": ["central", "state", "joint"],
+          "description": "Central Government, State Government, or Joint scheme."
+        },
+        "states": {
+          "type": "array",
+          "description": "Applicable Indian states or ['ALL'] for pan-India schemes (1 to 40 entries)."
+        },
+        "categories": {
+          "type": "array",
+          "description": "Normalized farmer benefit need categories (1 to 10 entries)."
+        },
+        "minLandHectares": {
+          "type": "number",
+          "description": "Minimum landholding in hectares (0 for no minimum)."
+        },
+        "maxLandHectares": {
+          "type": "number",
+          "description": "Maximum landholding cap in hectares (0 for no cap)."
+        },
+        "maxIncomeINR": {
+          "type": "number",
+          "description": "Maximum annual household income cap in INR (0 for no income cap)."
+        },
+        "genderEligibility": {
+          "type": "string",
+          "enum": ["all", "female_only", "female_priority"],
+          "description": "Gender applicability rule."
+        },
+        "titleEn": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "titleHi": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "titleMr": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "benefitEn": { "type": "string", "minLength": 5, "maxLength": 260 },
+        "benefitHi": { "type": "string", "minLength": 5, "maxLength": 320 },
+        "benefitMr": { "type": "string", "minLength": 5, "maxLength": 320 },
+        "summaryEn": { "type": "string", "minLength": 10, "maxLength": 600 },
+        "summaryHi": { "type": "string", "minLength": 10, "maxLength": 700 },
+        "summaryMr": { "type": "string", "minLength": 10, "maxLength": 700 },
+        "documentsEn": { "type": "array", "description": "Required documents in English (1 to 15 items)." },
+        "documentsHi": { "type": "array", "description": "Required documents in Hindi (1 to 15 items)." },
+        "documentsMr": { "type": "array", "description": "Required documents in Marathi (1 to 15 items)." },
+        "helpline": { "type": "string", "minLength": 3, "maxLength": 60 },
+        "isActive": { "type": "boolean" },
+        "createdByUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "slug",
+        "officialUrl",
+        "lastVerified",
+        "verifiedBy",
+        "governmentLevel",
+        "states",
+        "categories",
+        "minLandHectares",
+        "maxLandHectares",
+        "maxIncomeINR",
+        "genderEligibility",
+        "titleEn",
+        "titleHi",
+        "titleMr",
+        "benefitEn",
+        "benefitHi",
+        "benefitMr",
+        "summaryEn",
+        "summaryHi",
+        "summaryMr",
+        "documentsEn",
+        "documentsHi",
+        "documentsMr",
+        "helpline",
+        "isActive",
+        "createdByUid",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdminRole": {
+      "title": "KVK / B2G Officer Role",
+      "description": "Authorized agricultural officer UID with permission to maintain the live schemes collection. Zero PII stored.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["kvk_admin"]
+        },
+        "organization": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "grantedByUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "role", "organization", "grantedByUid", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/schemes/{schemeId}": {
+      "schema": { "$ref": "#/entities/Scheme" },
+      "description": "Publicly readable active agricultural welfare schemes; writable exclusively by verified KVK/B2G administrators."
+    },
+    "/admins/{adminUid}": {
+      "schema": { "$ref": "#/entities/AdminRole" },
+      "description": "Allowlist of authorized KVK/B2G officer UIDs managed solely by the bootstrapped super-admin."
+    }
+  }
+}

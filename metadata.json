@@ -1,0 +1,10 @@
+{
+  "name": "Haq — Farmer Benefits Finder",
+  "description": "Zero-PII trilingual (English, Hindi, Marathi) agricultural welfare scheme finder, Gemini Live voice assistant, and live B2G/KVK scheme verification portal for Indian farmers.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

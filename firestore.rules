@@ -1,0 +1,187 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Primitive Helpers ---
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isBootstrapAdmin() {
+      return isVerifiedUser() && request.auth.token.email == 'solankeabhay936@gmail.com';
+    }
+
+    function isKvkAdmin() {
+      return isBootstrapAdmin() || (
+        isVerifiedUser() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isStringBetween(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isNonEmptyStringList(listVal, maxItems) {
+      return listVal is list &&
+        listVal.size() >= 1 &&
+        listVal.size() <= maxItems &&
+        listVal[0] is string &&
+        listVal[0].size() >= 1 &&
+        listVal[0].size() <= 200;
+    }
+
+    // --- Validation Blueprints ---
+    function isValidScheme(data) {
+      return data.keys().hasAll([
+          'slug', 'officialUrl', 'lastVerified', 'verifiedBy', 'governmentLevel',
+          'states', 'categories', 'minLandHectares', 'maxLandHectares', 'maxIncomeINR',
+          'genderEligibility', 'titleEn', 'titleHi', 'titleMr',
+          'benefitEn', 'benefitHi', 'benefitMr',
+          'summaryEn', 'summaryHi', 'summaryMr',
+          'documentsEn', 'documentsHi', 'documentsMr',
+          'helpline', 'isActive', 'createdByUid', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'slug', 'officialUrl', 'lastVerified', 'verifiedBy', 'governmentLevel',
+          'states', 'categories', 'minLandHectares', 'maxLandHectares', 'maxIncomeINR',
+          'genderEligibility', 'titleEn', 'titleHi', 'titleMr',
+          'benefitEn', 'benefitHi', 'benefitMr',
+          'summaryEn', 'summaryHi', 'summaryMr',
+          'documentsEn', 'documentsHi', 'documentsMr',
+          'helpline', 'isActive', 'createdByUid', 'createdAt', 'updatedAt'
+        ]) &&
+        isStringBetween(data.slug, 2, 80) && data.slug.matches('^[a-z0-9-]+$') &&
+        isStringBetween(data.officialUrl, 10, 300) && data.officialUrl.matches('^https://[a-zA-Z0-9.-]+(/.*)?$') &&
+        isStringBetween(data.lastVerified, 10, 10) && data.lastVerified.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') &&
+        isStringBetween(data.verifiedBy, 2, 100) &&
+        data.governmentLevel in ['central', 'state', 'joint'] &&
+        isNonEmptyStringList(data.states, 40) &&
+        isNonEmptyStringList(data.categories, 10) &&
+        data.minLandHectares is number && data.minLandHectares >= 0 && data.minLandHectares <= 1000 &&
+        data.maxLandHectares is number && data.maxLandHectares >= 0 && data.maxLandHectares <= 1000 &&
+        (data.maxLandHectares == 0 || data.minLandHectares <= data.maxLandHectares) &&
+        data.maxIncomeINR is number && data.maxIncomeINR >= 0 && data.maxIncomeINR <= 100000000 &&
+        data.genderEligibility in ['all', 'female_only', 'female_priority'] &&
+        isStringBetween(data.titleEn, 3, 160) &&
+        isStringBetween(data.titleHi, 3, 200) &&
+        isStringBetween(data.titleMr, 3, 200) &&
+        isStringBetween(data.benefitEn, 5, 260) &&
+        isStringBetween(data.benefitHi, 5, 320) &&
+        isStringBetween(data.benefitMr, 5, 320) &&
+        isStringBetween(data.summaryEn, 10, 600) &&
+        isStringBetween(data.summaryHi, 10, 700) &&
+        isStringBetween(data.summaryMr, 10, 700) &&
+        isNonEmptyStringList(data.documentsEn, 15) &&
+        isNonEmptyStringList(data.documentsHi, 15) &&
+        isNonEmptyStringList(data.documentsMr, 15) &&
+        isStringBetween(data.helpline, 3, 60) &&
+        data.isActive is bool &&
+        isValidId(data.createdByUid) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidAdminRole(data, adminUid) {
+      return data.keys().hasAll(['uid', 'role', 'organization', 'grantedByUid', 'createdAt']) &&
+        data.keys().hasOnly(['uid', 'role', 'organization', 'grantedByUid', 'createdAt']) &&
+        data.uid == adminUid &&
+        isValidId(data.uid) &&
+        data.role == 'kvk_admin' &&
+        isStringBetween(data.organization, 2, 120) &&
+        isValidId(data.grantedByUid) &&
+        data.grantedByUid == request.auth.uid &&
+        data.createdAt is timestamp;
+    }
+
+    // --- Collection: /schemes/{schemeId} ---
+    match /schemes/{schemeId} {
+      // Active schemes are publicly readable for Zero-PII farmer lookup; admins can inspect drafts too
+      allow get: if isValidId(schemeId) && (
+        existing().isActive == true || isKvkAdmin()
+      );
+
+      // Pillar 8: No get()/exists() in allow list; strictly evaluate resource.data
+      allow list: if existing().isActive == true ||
+        (isVerifiedUser() && existing().createdByUid == request.auth.uid) ||
+        isBootstrapAdmin();
+
+      // Pillar 10 evaluation order: Auth -> Static Validation -> Relational Check
+      allow create: if isVerifiedUser() &&
+        isValidId(schemeId) &&
+        isValidScheme(incoming()) &&
+        incoming().createdByUid == request.auth.uid &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        isKvkAdmin();
+
+      // Pillar 2 & 4: Validation blueprint wraps entire update, action-based affectedKeys allowlists
+      allow update: if isVerifiedUser() &&
+        isValidId(schemeId) &&
+        isValidScheme(incoming()) &&
+        incoming().createdByUid == existing().createdByUid &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        isKvkAdmin() && (
+          // Action 1: Quick KVK Verification Stamp
+          incoming().diff(existing()).affectedKeys().hasOnly(['lastVerified', 'verifiedBy', 'updatedAt']) ||
+          // Action 2: Toggle Active Visibility
+          incoming().diff(existing()).affectedKeys().hasOnly(['isActive', 'updatedAt']) ||
+          // Action 3: Full Scheme Content & Eligibility Edit by Admin
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'slug', 'officialUrl', 'lastVerified', 'verifiedBy', 'governmentLevel',
+            'states', 'categories', 'minLandHectares', 'maxLandHectares', 'maxIncomeINR',
+            'genderEligibility', 'titleEn', 'titleHi', 'titleMr',
+            'benefitEn', 'benefitHi', 'benefitMr',
+            'summaryEn', 'summaryHi', 'summaryMr',
+            'documentsEn', 'documentsHi', 'documentsMr',
+            'helpline', 'isActive', 'updatedAt'
+          ])
+        );
+
+      allow delete: if isVerifiedUser() &&
+        isValidId(schemeId) &&
+        isKvkAdmin();
+    }
+
+    // --- Collection: /admins/{adminUid} ---
+    match /admins/{adminUid} {
+      allow get: if isVerifiedUser() &&
+        isValidId(adminUid) &&
+        (request.auth.uid == adminUid || isBootstrapAdmin());
+
+      allow list: if isBootstrapAdmin();
+
+      allow create: if isBootstrapAdmin() &&
+        isValidId(adminUid) &&
+        isValidAdminRole(incoming(), adminUid) &&
+        incoming().createdAt == request.time;
+
+      allow update: if false;
+
+      allow delete: if isBootstrapAdmin() && isValidId(adminUid);
+    }
+  }
+}
