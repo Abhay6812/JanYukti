@@ -1,132 +1,295 @@
-# JanYukti (Haq) – Farmer Benefits Finder
+# 🌱 JanYukti (Haq) — Farmer Benefits Finder
 
-**Live demo:**
+> **Making government benefits accessible to every farmer through AI-powered guidance, simple language, and transparent eligibility checks.**
 
-A voice-friendly web app built **only for small farmers of Maharashtra**. A farmer describes their land and crop by voice or tap, and the app shows which government schemes they are **likely** eligible for, why, which documents to gather, how to apply, and when deadlines fall.
+JanYukti is a voice-friendly, multilingual platform designed specifically for small farmers in Maharashtra. It helps farmers discover government schemes relevant to their situation, understand their eligibility, identify required documents, and follow application procedures without navigating complicated government portals or relying on intermediaries.
 
-> Haq means "right": a farmer's right to the benefits made for them, explained in their own language, for free.
-
----
-
-## The problem
-
-- Scheme rules are scattered across many portals and written in complex language.
-- Eligible families miss benefits.
-- Many farmers pay middlemen for help that is free.
-
-## Who it is for
-
-- A small farmer in Maharashtra, often with low literacy and a basic phone.
-- A field worker or service-centre operator helping many farmers.
+🔗 **Live Demo:** https://janyukti.vercel.app/ 
+💻 **GitHub Repository:** https://github.com/Abhay6812/JanYukti
 
 ---
 
-## Features
+## 🎯 The Problem
 
-| Area | What it does |
+Government welfare schemes are designed to support farmers, but many eligible beneficiaries struggle to access them because:
+
+- Scheme information is scattered across multiple government portals.
+- Eligibility criteria are often difficult to understand.
+- Farmers may be unaware of benefits available to them.
+- Language barriers and digital literacy create additional challenges.
+- Many farmers depend on intermediaries for information and application assistance.
+
+As a result, eligible farmers may miss benefits they are entitled to receive.
+
+---
+
+## 💡 Our Solution
+
+JanYukti simplifies the process of discovering and understanding government schemes through an accessible, AI-assisted experience.
+
+Farmers can describe their land, crops, and circumstances using voice or text. The platform processes this information, checks it against predefined scheme eligibility rules, and presents understandable results along with guidance on what to do next.
+
+Our goal is to make government benefits easier to discover, understand, and access—without unnecessary complexity.
+
+---
+
+## 👥 Target Users
+
+- Small and marginal farmers in Maharashtra.
+- Farmers with limited digital literacy.
+- Users who prefer Marathi or Hindi over English.
+- Farmers unfamiliar with government scheme portals.
+- Community service centres and field workers assisting beneficiaries.
+
+---
+
+## ✨ Key Features
+
+| Feature | Description |
 |---|---|
-| Home | Speak or type about land, crop and situation. Language: English, Hindi, Marathi. Demo profile buttons for quick testing. |
-| Confirm | Reads back what was understood (e.g. "2 acres, cotton, land in father's name"). Farmer taps Yes or Edit. |
-| Questions | Only questions that change the result, one at a time, big tap buttons. |
-| Results | Per-scheme card: Likely eligible / Not eligible / Need more info, the exact rule behind it, near-miss tip, document checklist, apply steps, official link, "Last verified" date, and a "Never pay anyone, applying is free" banner. |
-| Tracker | Status per scheme (Not started, In progress, Submitted, Approved) with season-based deadline reminders. |
-| Voice assistant | Same flow as typing: speak, confirm, answer, results. |
-| Admin | Account creation only (see limitations). |
-
-## How it works
-
-1. **AI reads and explains only.** The Gemini API turns speech or text into structured facts and writes the explanation in simple language.
-2. **A plain rules engine decides eligibility.** Scheme rules are stored as editable data, not hidden in code.
-3. **Missing fact → "Need more info".** The app never guesses.
-
-Because the AI cannot decide eligibility, a wrong AI guess cannot change a result. The Confirm screen lets the farmer correct misheard input.
-
-## Design decisions
-
-- **Maharashtra only.** One state, one user, one pain.
-- **No login or signup for farmers.** Many small farmers forget passwords, share phones, or get confused by signup screens, so the app opens straight to the input box. No password, no OTP.
-- **Zero personal data.** No Aadhaar or ID numbers are collected. Only public scheme data and sample profiles are used.
-- **Honest wording.** The app says "likely eligible", never "guaranteed". The government office makes the final decision.
+| 🎙️ Voice-Based Input | Farmers can describe their situation using voice instead of typing. |
+| 🌐 Multilingual Experience | Supports English, Hindi, and Marathi. |
+| 👤 Farmer Profile Understanding | Identifies relevant details such as landholding, crop, and ownership circumstances. |
+| 📋 Eligibility Assessment | Checks user information against predefined scheme rules. |
+| 🤖 AI-Powered Assistance | Simplifies user input and explains scheme information in understandable language. |
+| 📑 Document Checklist | Displays documents required for the respective scheme. |
+| 🧭 Application Guidance | Provides application steps and relevant official links. |
+| 📊 Scheme Tracker | Helps users track application progress. |
+| 🔔 Deadline Awareness | Displays scheme-related deadline reminders. |
+| 🔍 Transparent Results | Explains why a farmer may qualify or may not qualify for a scheme. |
 
 ---
 
-## Advantages
+## ⚙️ How JanYukti Works
 
-- Voice and multilingual support for low-literacy users
-- Explainable results: every decision shows its rule
-- No farmer login; nothing personal collected
-- Free for the farmer, reduces dependence on middlemen
-- Clear, readable explanations from Gemini
-- Scheme rules can be updated as data
+### Step 1 — Tell Us About Your Situation
+Farmers can describe their agricultural circumstances using voice or text, including details such as land size, crop, and ownership.
 
-## Limitations
+### Step 2 — Profile Confirmation
+The system summarizes the information it understood and allows the user to confirm or correct it.
 
-- Covers a small set of real schemes, verified by hand from official sites; data can go out of date until re-checked
-- No automatic scheme-change detection yet
-- Gemini responses can be slow (a few seconds); the voice assistant is also limited by credits
-- Speech recognition may struggle with dialects and background noise
-- No farmer accounts, so progress is saved only on the device and does not sync across phones
-- Admin portal implements account creation only. Rule editing with live results and change history needs an extra database, which our credits did not allow
-- Tracker reminders are in-app only; no real push notifications
-- No payments, and no auto-submission of applications on government portals
+### Step 3 — Eligibility Questions
+JanYukti asks additional questions only when the missing information is required to evaluate a scheme.
 
----
+### Step 4 — Scheme Evaluation
+A rule-based eligibility engine evaluates the farmer's profile against available scheme criteria.
 
-## Roadmap
+### Step 5 — Personalized Results
+Farmers receive scheme-specific results, including:
 
-- Full admin portal with a proper database: rule editing, live result preview, change history
-- Optional farmer accounts using simple phone-number OTP
-- More schemes and districts in Maharashtra
-- Automatic scheme-change detection
-- Real push notifications and offline mode
-- Impact dashboard for partners
+- Eligibility status
+- Reason behind the eligibility decision
+- Missing requirements
+- Required documents
+- Application procedure
+- Official application links
 
-## Business viability
-
-NGOs, CSR teams, banks and service centres could pay per farmer helped or monthly, and receive an impact dashboard (farmers reached, schemes unlocked).
+### Step 6 — Track Progress
+Users can track the status of schemes they are interested in and keep track of their application journey.
 
 ---
 
-## Tech stack
+## 🛠️ Our Development Journey
 
-> Update this section to match the repository.
+Our journey with JanYukti began with brainstorming ideas using pen and paper. We discussed the core problem, explored possible solutions, and mapped our initial concepts against the problem statement. Before moving forward, we carefully examined the hackathon requirements, eligibility criteria, and feasibility of our proposed approach. This helped us identify what was genuinely necessary and refine our initial ideas into a more practical solution.
 
-- Frontend: web app deployed on Google Cloud Run
-- AI: Gemini API (speech understanding and explanations)
-- Eligibility: rules engine reading scheme data as JSON
-- Storage: on the user's device
-- Languages: English, Hindi, Marathi
+As development progressed, we revisited our original plan, evaluated our proposed features, and made several changes to the functionality and user experience. We explored CodeBenders' development environment and its capabilities during our workflow, while continuously refining the project's architecture, feature priorities, and implementation approach. Our focus throughout these iterations was to build a solution that was practical, accessible, and aligned with the actual needs of Maharashtra's farmers.
 
-## Getting started
+---
 
-> Replace with the real commands for your repo.
+## 🧠 AI + Rule-Based Architecture
+
+JanYukti uses AI for understanding and communication—not for making unchecked eligibility decisions.
+
+### AI Layer
+Responsible for:
+
+- Understanding natural-language farmer input.
+- Processing voice or text responses.
+- Extracting relevant profile information.
+- Asking contextual follow-up questions.
+- Explaining scheme information in simpler language.
+
+### Eligibility Engine
+Responsible for:
+
+- Evaluating structured farmer information.
+- Applying predefined scheme eligibility criteria.
+- Identifying missing requirements.
+- Generating consistent eligibility results.
+
+### Why This Approach?
+
+Combining AI with a rule-based eligibility system helps reduce unpredictable results.
+
+AI interprets the user's input, while the eligibility engine applies structured conditions. This makes scheme evaluations more explainable and prevents AI-generated assumptions from directly determining eligibility.
+
+---
+
+## 🏛️ Design Principles
+
+### Maharashtra-Focused
+Instead of attempting to cover every state, JanYukti focuses on Maharashtra to provide a more relevant experience for its target users.
+
+### Accessibility First
+The interface prioritizes simple language, voice interaction, and clear actions.
+
+### No Unnecessary Login
+Farmers can begin using the platform without being forced through complicated signup or login procedures.
+
+### Privacy-Conscious
+The platform avoids collecting unnecessary sensitive personal information.
+
+### Explainable Decisions
+Every eligibility result should provide understandable reasons rather than simply displaying a result.
+
+### Honest Guidance
+The platform provides guidance about likely eligibility and never promises guaranteed government approval.
+
+---
+
+## 📊 Advantages & Impact
+
+- Reduces the difficulty of discovering government schemes.
+- Makes scheme information easier to understand.
+- Helps farmers identify potentially available benefits.
+- Reduces dependence on middlemen for basic scheme information.
+- Supports Marathi and Hindi-speaking users.
+- Makes eligibility requirements more transparent.
+- Provides a structured path from scheme discovery to application.
+- Promotes awareness of government benefits among rural communities.
+
+---
+
+## ⚠️ Limitations
+
+- Currently covers a limited set of government schemes.
+- Scheme information requires periodic manual verification and updates.
+- AI responses may take several seconds.
+- Voice recognition may be affected by dialects and background noise.
+- Application tracking is currently device-based.
+- No automated submission to government portals.
+- Deadline reminders are currently limited to the application experience.
+
+---
+
+## 🚀 Future Roadmap
+
+- Expand coverage to more government schemes across Maharashtra.
+- Add more regional-language and dialect support.
+- Improve voice recognition for rural environments.
+- Introduce a centralized database for scheme updates.
+- Implement automatic scheme-change monitoring.
+- Add optional secure user accounts and synchronization.
+- Enable offline access for essential scheme information.
+- Introduce notifications for important deadlines.
+- Build an analytics dashboard to measure community impact.
+
+---
+
+## 💻 Tech Stack
+
+| Component | Technology |
+|---|---|
+| Frontend | React, TypeScript |
+| Build Tool | Vite |
+| Styling | Modern CSS / Tailwind-based UI |
+| AI Integration | Gemini API |
+| Eligibility Logic | Rule-based evaluation engine |
+| Data Management | JSON-based scheme information |
+| Backend / Services | Application-integrated services |
+| Deployment | Web deployment platform |
+
+*The technology stack may evolve as development progresses.*
+
+---
+
+## 📂 Project Structure
+
+```text
+JanYukti/
+├── public/
+├── src/
+│   ├── components/
+│   ├── screens/
+│   ├── data/
+│   ├── rules/
+│   ├── ai/
+│   └── ...
+├── .env.example
+├── package.json
+├── vite.config.ts
+└── README.md
+```
+
+*The structure above represents the logical organization of the application.*
+
+---
+
+## 🔧 Getting Started
+
+### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
-cd <repo-folder>
+git clone https://github.com/Abhay6812/JanYukti.git
+```
+
+### 2. Navigate to the Project
+
+```bash
+cd JanYukti
+```
+
+### 3. Install Dependencies
+
+```bash
 npm install
-cp .env.example .env     # add your Gemini API key
+```
+
+### 4. Configure Environment Variables
+
+Create a `.env` file using `.env.example` as a reference and configure the required API credentials.
+
+```env
+GEMINI_API_KEY=your_api_key_here
+```
+
+Never commit API keys or secrets to GitHub.
+
+### 5. Run the Development Server
+
+```bash
 npm run dev
 ```
 
-Never commit API keys. Keep them in environment variables on the server.
+Open the local URL provided by Vite in your browser.
 
-## Project structure
+---
 
-> Fill in once final.
+## 🌍 Vision
 
-```
-/src
-  /screens      Home, Confirm, Questions, Results, Tracker, Admin
-  /rules        Rules engine
-  /data         Scheme data (JSON)
-  /ai           Gemini calls
-```
+We envision a future where every farmer can access the government support available to them without confusion, technical barriers, or unnecessary dependency on intermediaries.
 
-## Disclaimer
+**JanYukti aims to bridge the gap between government welfare schemes and the people they are designed to serve.**
 
-JanYukti gives guidance on **likely** eligibility based on public scheme information. It is not an official government service and does not guarantee approval. Always confirm on the official scheme website or at the relevant office. Applying for government schemes is free; never pay anyone for it.
+---
 
-## License
+## ⚖️ Disclaimer
 
-Add your open-source license here (for example MIT).
+JanYukti is an independent informational platform and is not affiliated with or endorsed by any government department.
+
+It provides guidance based on available scheme information and does not guarantee eligibility, approval, or financial assistance. Final eligibility and approval are determined by the respective government authorities.
+
+Government scheme applications are generally free through official channels. Users should verify information through official government sources before applying.
+
+---
+
+## 👥 Contributors
+
+Developed as part of a hackathon project focused on solving real-world problems through technology.
+
+---
+
+<p align="center">
+  <b>JanYukti — Making every farmer aware of their rightful benefits. 🌱</b>
+</p>
